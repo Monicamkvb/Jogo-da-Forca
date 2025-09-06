@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jogo da Forca </title>
+  <style>
+    body {
+      margin:0;
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0b1d4c; /* azul marinho */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+    }
+    header h1 {
+      margin:0;
+    }
+    button {
+      background: none;
+      border: 2px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      flex:1;
+      padding:16px;
+    }
+    @media(max-width: 800px) {
+      main {grid-template-columns: 1fr;}
+    }
+    .card {
+      background: #142b6b;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .palavra {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .slot {
+      width: 32px;
+      height: 48px;
+      border-bottom: 2px solid white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .teclado {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 6px;
+      margin-top: 16px;
+    }
+    .key {
+      background: none;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .key.correct {background: #34d399; color:#000;}
+    .key.wrong {background: #ef4444; color:#000;}
+    .stage svg {max-width:200px; width:100%; height:auto;}
+    footer {text-align:center; padding:12px; font-size:14px;}
+    .msg {margin-top:12px; font-weight:bold;}
+    .msg.win {color:#34d399;}
+    .msg.lose {color:#ef4444;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Jogo da Forca</h1>
+    <div>
+      <button id="novo">Nova Palavra</button>
+      <button id="reiniciar">Reiniciar Jogo</button>
+    </div>
+  </header>
+  <main>
+    <div class="card stage">
+      <svg viewBox="0 0 100 120" aria-label="forca">
+        <line x1="10" y1="110" x2="90" y2="110" stroke="white" stroke-width="3" />
+        <line x1="20" y1="110" x2="20" y2="10" stroke="white" stroke-width="3" />
+        <line x1="20" y1="10" x2="60" y2="10" stroke="white" stroke-width="3" />
+        <line x1="60" y1="10" x2="60" y2="20" stroke="white" stroke-width="3" />
+        <circle id="p1" class="part" cx="60" cy="30" r="8" stroke="white" stroke-width="2" fill="none" opacity="0" />
+        <line id="p2" class="part" x1="60" y1="38" x2="60" y2="60" stroke="white" stroke-width="2" opacity="0" />
+        <line id="p3" class="part" x1="60" y1="42" x2="50" y2="50" stroke="white" stroke-width="2" opacity="0" />
+        <line id="p4" class="part" x1="60" y1="42" x2="70" y2="50" stroke="white" stroke-width="2" opacity="0" />
+        <line id="p5" class="part" x1="60" y1="60" x2="50" y2="70" stroke="white" stroke-width="2" opacity="0" />
+        <line id="p6" class="part" x1="60" y1="60" x2="70" y2="70" stroke="white" stroke-width="2" opacity="0" />
+      </svg>
+    </div>
+    <div class="card">
+      <div id="dica" style="margin-bottom:8px"></div>
+      <div class="palavra" id="palavra"></div>
+      <div class="teclado" id="teclado"></div>
+      <div class="msg" id="msg"></div>
+    </div>
+  </main>
+  <footer>Dica: Use o teclado da tela ou o físico para jogar.</footer>
+
+<script>
+const TERMOS = [
+  {palavra: 'FASE', dica:'Estágios ou etapas'},
+  {palavra: 'DISCIPLINA', dica:'Áreas de processo'},
+  {palavra: 'WORKFLOW', dica:'Mostram a sequência'},
+  {palavra: 'ARTEFATOS', dica:'Resultados intermediários'},
+  {palavra: 'PAPEIS', dica:'Perfis profissionais que participam da execução'},
+  {palavra: 'INTERACAO', dica:'Cada ciclo de execução'}
+];
+const MAX_ERROS = 6;
+
+let indice = 0;
+let acertos = new Set();
+let erros = new Set();
+let palavrasDescobertas = 0;
+
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+function novoTermo(){
+  if(indice >= TERMOS.length){
+    alert('Parabéns! Você venceu todas as palavras!');
+    indice = 0; palavrasDescobertas=0;
+  }
+  acertos.clear(); erros.clear();
+  render();
+}
+
+function render(){
+  const termo = TERMOS[indice];
+  $('#dica').textContent = 'Dica: '+termo.dica;
+
+  const palavraEl = $('#palavra'); palavraEl.innerHTML='';
+  for(const ch of termo.palavra){
+    const div = document.createElement('div'); div.className='slot';
+    div.textContent = acertos.has(ch) ? ch : '';
+    palavraEl.appendChild(div);
+  }
+
+  const tecladoEl = $('#teclado'); tecladoEl.innerHTML='';
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l=>{
+    const btn = document.createElement('button');
+    btn.textContent = l; btn.className='key';
+    if(acertos.has(l)) btn.classList.add('correct');
+    if(erros.has(l)) btn.classList.add('wrong');
+    btn.disabled = acertos.has(l)||erros.has(l);
+    btn.onclick=()=>tentar(l);
+    tecladoEl.appendChild(btn);
+  });
+
+  $('.msg').textContent='';
+  desenharBoneco();
+}
+
+function tentar(letra){
+  const termo = TERMOS[indice];
+  if(termo.palavra.includes(letra)) acertos.add(letra);
+  else erros.add(letra);
+  desenharBoneco();
+  render();
+  checarFim();
+}
+
+function desenharBoneco(){
+  const partes = ["#p1","#p2","#p3","#p4","#p5","#p6"];
+  partes.forEach((p,i)=>{
+    $$(p)[0]?.setAttribute('opacity', i<erros.size ? '1':'0');
+  });
+}
+
+function checarFim(){
+  const termo = TERMOS[indice];
+  if([...termo.palavra].every(ch=>acertos.has(ch))){
+    palavrasDescobertas++;
+    $('.msg').textContent='Palavra correta!';
+    indice++; setTimeout(novoTermo,1000);
+  } else if(erros.size>=MAX_ERROS){
+    $('.msg').textContent='Você perdeu a palavra: '+termo.palavra;
+    indice++; setTimeout(novoTermo,1000);
+  }
+}
+
+$('#novo').addEventListener('click', ()=>{novoTermo();});
+$('#reiniciar').addEventListener('click', ()=>{indice=0; palavrasDescobertas=0; novoTermo();});
+
+document.addEventListener('keydown', e=>{
+  const key = e.key.toUpperCase();
+  if(key.length===1 && key>='A' && key<='Z') tentar(key);
+});
+
+novoTermo();
+</script>
+</body>
+</html>
