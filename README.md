@@ -2,7 +2,7 @@
 
 ## 📄 Descrição
 
-Este é um jogo simples do tipo **forca**, desenvolvido com **HTML, CSS e JavaScript **, tudo contido em **um único arquivo index.html`.
+Este é um jogo simples do tipo **forca**, desenvolvido com HTML, CSS e JavaScript , tudo contido em **um único arquivo index.html`.
 
 O objetivo é adivinhar 6 palavras relacionadas a processos de desenvolvimento, com base em dicas fornecidas. O jogador pode utilizar o teclado físico ou o teclado virtual na tela.
 
@@ -15,7 +15,7 @@ O objetivo é adivinhar 6 palavras relacionadas a processos de desenvolvimento, 
 - Bernardo dos Santos
 - Alice Malaquias
 - Priscila Gomes
-- 
+- Pedro Augusto
 
 ---
 
@@ -49,14 +49,18 @@ Vence a rodada se descobrir todas as letras.
 Vence o jogo se descobrir todas as 6 palavras.
 Perde a rodada se completar o boneco.
 
+## 📚 Palavras e Dicas
+
+| Palavra      | Dica                                  |
+|--------------|----------------------------------------|
+| FASE         | Estágios ou etapas                    |
+| DISCIPLINA   | Áreas de processo                     |
+| WORKFLOW     | Mostram a sequência                   |
+| ARTEFATOS    | Resultados intermediários             |
+| PAPEIS       | Perfis profissionais participantes    |
+| INTERACAO    | Cada ciclo de execução                |
 
 
-1. FASE – Estágios ou etapas
-2. DISCIPLINA – Áreas de processo
-3. WORKFLOW – Mostram a sequência
-4. ARTEFATOS – Resultados intermediários
-5. PAPEIS – Perfis profissionais que participam da execução
-6. INTERACAO – Cada ciclo de execução
 
 ## Prompt Criado
 
@@ -69,7 +73,7 @@ Palavras: FASE, DISCIPLINA, WORKFLOW, ARTEFATOS, PAPEIS, INTERACAO, com signific
 
 ## Registro de Testes e Correções
 
-## Caso de Teste 1
+Caso de Teste 1
 
 Descrição: Caso o jogador não consiga acertar a palavra.
 Resultado: 0 erros encontrados.
